@@ -119,3 +119,35 @@ Example: jpa; spring --> becomes automatic modules spring.core.jar ==> spring.co
 ignores module-info.java ==> everything public is visible to users of the module
 
 
+Scenario 1:
+
+sample is un-named module ==> no module.info.java
+mylib.jar is added as classpath to "sample" and not module-path
+now sample project can access all public members of mylib --> no restrictions ==> [ignores module-info.java of mylib]
+
+
+A Single Java Project can contain multiple JPMS modules
+--> IDE support is not there
+see: multimodule.zip README.md for executing
+
+--------------
+
+Automatic modules
+
+common.zip a module without module-info.java < -- built using without JPMS
+
+check automaticmodules.zip
+
+javac --module-source-path src -p mods -m main.app  -d out
+
+jar files present in "mods" folder becomes an automatic-module ==> module-name will be the name of jar
+
+
+MyModule { can apply restrictions } ==> common.jar as module path
+
+-------
+
+Multi Maven Project with JPMS and JPMS --> provides, uses, ...
+
+
+Resume @ 4:15
