@@ -194,9 +194,37 @@ STDOUT: Hello World!!
 
 $sh MYAPP
 
+===============
+
+Java 10 => Local variable type interface
+
+keyword "var"
+
+variables declared using "var" keyword are statically typed
+
+var text = "Hello Java 10"; 
+same as
+String text = "Hello Java 10";
+
+Map<String,List<Integer>> data = new HashMap<String,List<Integer>>();
+
+var data = new HashMap<String,List<Integer>>();
+
+var is not allowed when the compiler is incapable of infering the correct type
+Below code is not allowed:
+var a; // not allowed
+
+var nothing = null; // not allowed
+
+var lambda = () -> System.out.println("Hello!!!"); // not allowed
+
+Java 11 -> allowed "var" in lambda parameters
+
+Predicate<Integer> p1 = (@NotNull Integer data) -> true;
+Predicate<Integer> p2 = data -> true; // implied type -> type inference
+Predicate<Integer> p3 = (@NotNull var data) -> true; // using type inference
+
+=================
 
 
 
-Scenario: complete java 8 style --> simple use classpath --> it works
-
-java -cp a.jar -p b.jar --add-modules java.base:java.sql
