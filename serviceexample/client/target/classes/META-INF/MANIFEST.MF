@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Build-Jdk-Spec: 17
+Class-Path: api-1.0.0.jar impl-1.0.0.jar
+Main-Class: client.Main
+Created-By: Maven Integration for Eclipse
+

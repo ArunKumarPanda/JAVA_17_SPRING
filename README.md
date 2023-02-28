@@ -150,4 +150,53 @@ MyModule { can apply restrictions } ==> common.jar as module path
 Multi Maven Project with JPMS and JPMS --> provides, uses, ...
 
 
-Resume @ 4:15
+==========================
+
+Step 1:
+New Maven Project
+groupid com.adobe
+artificatId: serviceexample
+version: 1.0.0
+package:pom
+
+add below config to pom.xml
+<build>
+	  <pluginManagement>
+		  <plugins>
+			  <plugin>
+				  <groupId>org.apache.maven.plugins</groupId>
+				  <artifactId>maven-compiler-plugin</artifactId>
+				  <version>3.11.0</version>
+				  <configuration>
+					  <source>17</source>
+					  <target>17</target>
+				  </configuration>
+			  </plugin>
+		  </plugins>
+	  </pluginManagement>
+  </build>
+
+Step 2:
+create a new Maven Module Project
+create simple
+api
+
+ServiceLoader of java 8:
+META-INF/services/com.example.LogService
+com.adobe.service.LogStdOutImpl
+com.adobe.service.LogFileImpl
+
+JPMS:
+java -p api/target/api-1.0.0.jar:client/target/client-1.0.0.jar:impl/target/impl-1.0.0.jar -m client/client.Main
+STDOUT: Hello World!!
+
+ jlink -p api/target/api-1.0.0.jar:client/target/client-1.0.0.jar:impl/target/impl-1.0.0.jar --add-modules client,api,impl --output myimage --launcher MYAPP=client/client.Main 
+
+$sh MYAPP
+
+
+
+
+Scenario: complete java 8 style --> simple use classpath --> it works
+
+java -cp a.jar -p b.jar --add-modules java.base:java.sql
