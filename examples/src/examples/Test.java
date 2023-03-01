@@ -1,5 +1,6 @@
 package examples;
 
+record BlueLight() implements TrafficLight{}
 public class Test {
 
 	public static void main(String[] args) {

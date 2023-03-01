@@ -377,3 +377,61 @@ public record Person(String name, int age) {
 	}
 }
 
+====
+JDK 19 --> value
+public value record Person(String, name, int age) {}
+
+it treats this as primitive and not reference type
+
+=======
+
+jdk 17 => sealed
+
+more fine grained inheritance control
+
+Product --> only Tv, Mobile can be extended; Don't want any other classes to extend
+
+
+sealed interface AsyncReturn<V> permits Success, Failure, Timeout, Interrupted{}
+
+record Success<V>(V result) implements AsyncReturn<V> {}
+record Failure<V>(V result) implements AsyncReturn<V> {}
+record Timeout<V>(V result) implements AsyncReturn<V> {}
+record Interrupted<V>(V result) implements AsyncReturn<V> {}
+
+public interface Future<V> {
+	AsyncReturn<V> get();
+}
+
+main
+Future<Integer> future = new Future<>() {
+	@Override
+	pulic AsyncReturn<Integer> get() {
+		return new Success<Integer>(100);
+	}
+}
+AsyncReturn<V> r = future.get();
+switch(r) {
+	case Success(var result) -> System.out.println(result);
+	case Failure(var result) -> System.out.println(result);
+	case Timeout(var result) -> System.out.println(result);
+	case Interrupted(var result) -> System.out.println(result);
+}
+
+------
+
+sealed abstract class Product permits TV, Mobile {
+	//
+}
+
+final class Tv extends Product {
+
+}
+
+non-sealed class Mobile extends Product permits SmartPhone {
+
+}
+
+
+
+
