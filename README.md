@@ -226,5 +226,154 @@ Predicate<Integer> p3 = (@NotNull var data) -> true; // using type inference
 
 =================
 
+Day 2
 
+Recap:
+Java 8 - 17 features
+java 9:
+Named modules ==> module-info.java
+Automatic Modules ==> "jars" without module-info.java added to module-path ==> jar file name becomes the module name
+Un-named modules ==> "jars" added to class-path ==> no module-info.java ==> similar to Java 8 or prev
+
+exports, requires, provides, with, uses
+
+Java 10 -> "var" keyword Local variable type inference
+
+
+Java 9 --> Class Data Sharing CDS
+
+JRE ==> ClassLoaders
+
+loadClass(), verifyClass(), defineClass() --> internal data structrue ==> JVM MetaData
+
+CDS Archive ==> built-in classes ==> file
+
+JVM 1
+
+JVM 2
+
+Java 12 ==> Application Class Data Sharing
+
+java -jar AppCDS.jar
+0.898 seconds
+
+java -XX:ArchiveClassesAtExit=appCDS.jsa -jar AppCDS.jar
+0.885 seconds
+
+java -XX:SharedArchiveFile=appCDS.jsa -jar AppCDS.jar
+0.692 seconds
+
+http://localhost:9999/api/greeting
+
+java -XX:SharedArchiveFile=appCDS.jsa -XX:DumpLoadedClassList=hello.lst  -jar AppCDS.jar
+
+
+======
+java 11 --> run Java commaond on Source code, no need to compile
+
+java 12 [preview] --> Pattern Matching
+
+java --enable-preview Example.java
+
+jshell --> java 9
+
+Prior to Java 12:
+```
+Object obj = "Hello World!!!";
+if(obj instanceof String) {
+	String s = (String) obj;
+	System.out.println(s.toUpperCase());
+}
+
+```		
+With Java 12: Pattern Matching for instanceof
+```
+Object obj = "Hello World!!!";
+ if(obj instanceof String s)  {
+	System.out.println(s.toUpperCase());
+ }
+```
+
+Java 12 --> Switch Expression
+```
+package examples;
+
+public class Test {
+
+	public static void main(String[] args) {
+		System.out.println(getValueArrow("b"));
+	}
+	
+	public static int getValue(String mode) {
+		int result = -1;
+		switch(mode) {
+			case "a": result = 1; break;
+			case "b": result = 2; break;
+			default: result = 3;
+		}
+		
+		return result;
+	}
+	
+	// java 12 Switch expression
+	public static int getValueArrow(String mode) {
+		int result = switch(mode) {
+			case "a", "b" -> 1;
+			case "c"-> 2;
+			default -> 3;
+		};
+		
+		return result;
+	}
+	// java 13 switch expression ==> yield to return a value
+		public static int getValueYield(String mode) {
+			int result = switch(mode) {
+				case "a", "b" -> {
+					System.out.println("Case a and b");
+					yield 1;
+				}
+				case "c"-> 2;
+				default -> 3;
+			};
+			
+			return result;
+		}
+
+}
+```
+
+java 14 --> record
+
+Records were introduced to create immutable objects ==> reduce boilerplate code in data model POJOS [DTO]
+
+public record Person(String, name, int age) {}
+
+--> we get constructor, getters, equals and hashCode, toString
+
+Similar to What Lombok gives you --> 
+@Value
+public class Person {
+	private String name;
+	private int age;
+}
+
+Can't be used for entities to Map to Database table
+Hibernate ==> Mutate the code ==> setting PK ==> Proxy has to be added
+
+@Entity
+public record Person(...){ } // fails
+
+----
+
+public record Person(String name, int age) {
+	public Person {
+		if(age < 0) {
+			throw new IllegalArgumentException("invalid age");
+		}
+	}
+	@Override
+	public String name() { // name() and not getName()
+		return name.toUpperCase();
+	}
+}
 
