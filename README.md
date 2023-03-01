@@ -428,9 +428,23 @@ final class Tv extends Product {
 
 }
 
-non-sealed class Mobile extends Product permits SmartPhone {
+sealed class Mobile extends Product permits SmartPhone {
 
 }
+
+
+
+final: Cannot be extended further
+
+sealed: Can only be extended by its permitted subclasses
+
+non-sealed: Can be extended by unknown subclasses; a sealed class cannot prevent its permitted subclasses from doing this
+
+==
+pattern matching switch , record, sealed
+
+Resume @ 4:20
+
 
 
 
