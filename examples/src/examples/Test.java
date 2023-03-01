@@ -1,10 +1,18 @@
 package examples;
 
-record BlueLight() implements TrafficLight{}
+
 public class Test {
 
 	public static void main(String[] args) {
-		System.out.println(getValueYield("b"));
+
+String data = """
+	{
+		"name": "Linda",
+		"age": 24
+	}
+""";
+System.out.println(data);
+		//System.out.println(getValueYield("b"));
 	}
 	
 	public static int getValue(String mode) {

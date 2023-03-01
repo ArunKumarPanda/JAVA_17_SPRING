@@ -443,9 +443,208 @@ non-sealed: Can be extended by unknown subclasses; a sealed class cannot prevent
 ==
 pattern matching switch , record, sealed
 
-Resume @ 4:20
+=========================
+
+JDK 17 --> new string literal
+
+String data = """
+	{
+		"name": "Linda",
+		"age": 24
+	}
+""";
+
+data = "{\"name\":\"Linda\" , \n \"age\" : 24 }";
+
+=============
+
+Additions to Stream api
+Java 9
+1) takeWhile(Predicate)
+Stream.of(1,2,3,4,5)
+	.takeWhile(n -> n < 3)
+	.collect(Collectors.toList()); // [1,2]
+
+2) dropWhile(Predicate)
+Stream.of(1,2,3,4,5)
+	.dropWhile(n -> n < 3)
+	.collect(Collectors.toList()); // [3,4,5]
+
+Java 12:
+3) Teeing Collector
+It is a composite of two downstream collectors.
+Every element is processed by both downstream collectors
+The result is passed to merge function
+
+double mean = Stream.of(1,2,3,4,5)
+	.collect(Collectors.teeing(
+		Collectors.summing(i -> i),
+		Collectors.counting(),
+		(sum, count) -> sum / count));
+	
+// 3.0
+
+String functions ==> strip(), stripLeading(), stripTrailing(), repeat(), lines()
+
+
+-----------
+
+Garbage Collection:
+
+Java 8 --> CMS Concurrent Mark Sweep GC
+
+Java 8 - 17
+GC Types:
+1) Epsilon GC --> NO GC --> allocates objects ; doesn't delete objects
+--> BenchMarking
+--> Short running applications ==> Financial applications ==> 9 AM start --> 5 PM Shut Down
+
+% java -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC MemoryPolluter.java
+Terminating due to java.lang.OutOfMemoryError: Java heap space
+
+2) G1GC
+java -XX:+UseG1GC
+4TB
+
+3) ZGC
+java -XX:+ZGC
+Low latency scalable garbage collector
+--> Pause time shall not exceed 10 ms [ Mark Start , Mark End, Relocate Start, RelocateEnd]
+supports 16TB
+
+4) Shenandoah [ shah nuhn doh uh] --> Preview in JDK 17
+
+=========================
+
+FlighRecorder ==> Free and available in java 9 version onwards
+==> Profile of Memory, heap dumps, threads
+
+
+=========================
+Java 1.2 --> bean --> any reusable object is a  bean 
+
+SOLID Design Principles:
+D --> Dependecy Injection
+
+Spring Framework
+Light weight application framework for building enterprise applications.
+It provides container -> Manage life cycle of beans, wires dependencies
+
+Bean --> any object managed by Spring is called as bean
+
+public interface EmployeeDao {
+	void addEmployee(Employee e);
+}
+
+public class EmployeeDaoMongoImpl implements EmployeDao {
+	public void addEmployee(Employee e) {
+		db.collections.insert(json of e);
+	}
+}
+
+public class EmployeeDaoRdbmsImpl implements EmployeDao {
+	public void addEmployee(Employee e) {
+		insert into employess ...
+	}
+}
+
+public class SampleService {
+	private EmployeeDao employeeDao;
+	public static void setEmployeeDao(EmployeeDao dao) {
+		this.employeeDao = dao;
+	}
+
+	public void doTask() {
+		Employee e =...
+		employeeDao.addEmployee(e);
+	}
+}
 
 
 
+beans.xml
+<beans>
+	<bean id="mongo" class="pkg.EmployeeDaoMongoImpl"/>
+	<bean id="db" class="pkg.EmployeeDaoRdbmsImpl"/>
+	<bean id="service" class="pkg.SampleService">
+		<property name="emloyeeDao" ref="db">
+	</bean>
+</beans>
 
+<bean id="service" class="pkg.SampleService" auto-wiring="type | name"> 
+
+Starting a Spring Container:
+
+ApplicationContext ctx = new ClassPathXMLApplicationContext("beans.xml");
+
+ApplicationContext is now a reference to Spring container
+
+SampleService s  = ctx.getBean("service");
+
+==========
+Using Annotation as metadata -> no xml files 
+
+public interface EmployeeDao {
+	void addEmployee(Employee e);
+}
+
+@Repository
+public class EmployeeDaoMongoImpl implements EmployeDao {
+	public void addEmployee(Employee e) {
+		db.collections.insert(json of e);
+	}
+}
+
+@Service
+public class SampleService {
+	@Autowired
+	private EmployeeDao employeeDao; ̑
+	 public void doTask() {
+		Employee e =...
+		employeeDao.addEmployee(e);
+	}
+}
+
+Spring Container creates beans which has one of these annoations:
+1) @Component
+2) @Repository
+spring-framework/spring-jdbc/src/main/resources/org/springframework/jdbc/support/sql-error-codes.xml 
+3) @Service
+4) @Controller
+5) @RestController
+6) @Configuration
+7) @ControllerAdvice
+8) method marked with @Bean is a factory method --> any object returned form such a method is managed by
+spring container
+
+
+try {
+
+} catch(SQLException ex) {
+	if(ex.getErrorCode() == 1052) {
+		throw new DuplicateKeyException(...);
+	}
+}
+
+Spring uses ByteCode Insrumentation libraries:
+CGlib, JavaAssist, ByteBuddy
+
+ApplicationContext ctx = new AnnotationConfigApplicationContext();
+ctx.scan("com.adobe.prj"); // package and sub-packages
+
+----
+
+Spring Boot 3
+Spring Boot is a project that is built on the top of the Spring Framework 6. 
+It provides an easier and faster way to set up, configure, and run both simple and entriprse application
+
+Spring Boot is highly opiniated framework, Out of the box it configures few things:
+1) if we choose JDBC --> configures DB connection pool using HikariCP
+2) if we write web based application --> Configure Embedded tomcat server
+3) if we write ORM code --> configures Hibernate as ORM provider
+
+Spring Boot 3/ Spring Framework 6 --> uses JDK 17+
+
+
+Eclipse ==> Eclipse Marketplace ==> Search [STS] ==> install Spring Tool suite 4.x
 
