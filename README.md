@@ -932,5 +932,11 @@ ORM operatios --> i need to log SQLs generated
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 ORM --> to generate SQL for MySQL8 version
 
+public interface ProductDao extends JpaRepository<Product, Integer> {
+
+}
+
+Spring Data JPA ==> creates Implementation class for the interface
+
 
 
