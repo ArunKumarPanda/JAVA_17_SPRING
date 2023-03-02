@@ -648,3 +648,40 @@ Spring Boot 3/ Spring Framework 6 --> uses JDK 17+
 
 Eclipse ==> Eclipse Marketplace ==> Search [STS] ==> install Spring Tool suite 4.x
 
+=========
+
+Day 3
+
+Day 1 & Day 2: java 8 -- 17 features
+
+Spring Container --> Core module --> Container --> Manage life cycle of object and wiring
+
+* Understand Spring Container in Spring Boot application
+* ORM using Persisentence API with Hibernate as ORM provider
+* Building RESTful Webservices
+
+https://start.spring.io/
+
+New Spring Starter Project
+
+@SpringBootApplication
+1) @ComponentScan
+	scan for above mentioned anntations like @Component,... from "com.example.demo" and subpackages
+	and create instance when spring containers
+
+ com.adobe.service < -- not discoverable
+
+2) @EnableAutoConfiguration
+ --> create beans based on the context
+ if we are using RDBMS --> create a pool of DB connection ==> HikariCP
+ --> ORM ==> Hibernate
+ -> for Web create embedded Tomcat container ==> TomcatWebContainer
+ ..
+
+ 3) @Configuration
+
+--
+SpringApplication.run(SpringdemoApplication.class, args); --> creates Spring container
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html
+
