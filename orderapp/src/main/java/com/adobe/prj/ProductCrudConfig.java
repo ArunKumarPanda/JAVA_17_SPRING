@@ -17,10 +17,17 @@ public class ProductCrudConfig implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		//addProducts();
-		listProducts();
-		getById();
+//		listProducts();
+//		getById();
+		getByRange();
 	}
 
+	private void getByRange() {
+		List<Product> products = service.getByRange(500, 1000);
+		for(Product p : products) {
+			System.out.println(p); // toString
+		}
+	}
 	private void getById() {
 		System.out.println("By ID ----->");
 		Product p = service.getProductById(1);

@@ -30,4 +30,8 @@ public class OrderService {
 	public Product addProduct(Product p) {
 		return productDao.save(p);
 	}
+	
+	public List<Product> getByRange(double low, double high) {
+		return productDao.getByRange(low, high);
+	}
 }

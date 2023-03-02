@@ -38,7 +38,7 @@ docker run -p 3306:3306 -d --name local-mysql -e MYSQL_ROOT_PASSWORD=Welcome123 
 
 c) CONNECT TO A MYSQL RUNNING CONTAINER:
 
-$ docker exec -t -i <container_name> /bin/bash
+$ docker exec -t -i local-mysql bash
 
 d) Run MySQL client:
 
@@ -937,6 +937,48 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
 }
 
 Spring Data JPA ==> creates Implementation class for the interface
+
+
+
+docker exec -it local-mysql bash
+bash-4.4# mysql -u root -p
+Enter password: 
+mysql> use DB_SPRING;
+Database changed
+mysql> show tables;
+Empty set (0.00 sec)
+
+mysql> show tables;
++---------------------+
+| Tables_in_DB_SPRING |
++---------------------+
+| products            |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> select * from products;
++----+----------------+-------+------+
+
+
+public class BookDaoJdbcImpl implements BookDao {
+	public void addBook(Book b) {
+		Connetion con = DriverManager.getConnection(URL);
+		String SQL  = "insert into products values (?,?,?,?)"
+		PreparedStatement ps = con.prepareStatement(SQL);
+		ps.set
+
+		ps.exceuteUpdate();
+		con.close();
+	}
+}
+
+addBook(Book b) {
+		em.persist(b);
+}
+
+from Book								select * from books;
+from Book where name ='JPA'				select * from books where title = 'JPA'
+select name, price from Book 			select title,amount from books
 
 
 
