@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.BookDao;
 
-@Service
+@Service()
 public class BookService {
 	
 	@Autowired

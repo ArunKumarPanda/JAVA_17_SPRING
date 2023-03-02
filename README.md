@@ -685,3 +685,55 @@ SpringApplication.run(SpringdemoApplication.class, args); --> creates Spring con
 
 https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html
 
+---
+Problem:
+Field bookDao in com.example.demo.service.BookService required a single bean, but 2 were found:
+	- bookDaoDbImpl: 
+	- bookDaoMongoImpl:
+
+Solution 1:
+one of the implementation should hava @Primary
+@Primary
+@Repository
+public class BookDaoDbImpl implements BookDao {
+
+Solution 2:
+@Qualifier
+
+AService needs BookDaoDbImpl
+BService needs BookDaoMongoImpl
+
+@Repository("mongo")
+public class BookDaoMongoImpl implements BookDao {
+
+@Repository("db")
+public class BookDaoDbImpl implements BookDao {
+
+
+@Service()
+public class BookService {
+	@Qualifier("mongo")
+	@Autowired
+	private BookDao bookDao;
+
+
+Solution 3: @Profile
+
+@Profile("prod")
+@Repository("mongo")
+public class BookDaoMongoImpl implements BookDao {
+
+@Profile("dev")
+@Repository("db")
+public class BookDaoDbImpl implements BookDao {
+
+Program arguments
+Run As -> Run Configuration -> Arguments
+--spring.profiles.active=prod
+
+OR
+src/main/resources
+application.properties / application.yml
+spring.profiles.active=prod
+
+====

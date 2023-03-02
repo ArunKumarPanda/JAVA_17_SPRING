@@ -3,13 +3,15 @@ package com.example.demo.dao;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
-@Profile("dev")
-@Repository("db")
-public class BookDaoDbImpl implements BookDao {
+
+
+@Profile("prod")
+@Repository("mongo")
+public class BookDaoMongoImpl implements BookDao {
 
 	@Override
 	public void addBook() {
-		System.out.println("stored using RDBMS!!!");
+		System.out.println("Mongodb store!!!");
 	}
 
 }
