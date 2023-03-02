@@ -737,3 +737,101 @@ application.properties / application.yml
 spring.profiles.active=prod
 
 ====
+
+Program Arguments ==> application.properties ==> application.yml
+
+====
+Solution 4:
+@ConditionalOnProperty(name = "dao", havingValue = "db")
+@Repository("db")
+public class BookDaoDbImpl implements BookDao {
+
+@ConditionalOnProperty(name = "dao", havingValue = "mongo")
+@Repository("mongo")
+public class BookDaoMongoImpl implements BookDao {
+
+application.properties
+dao=mongo
+
+=======
+
+@ConditionalOnMissingBean("db") If a type of bean is not availble then only create this bean
+@Repository("mongo")
+public class BookDaoMongoImpl implements BookDao {
+
+=======================================
+
+Bean Factory ==> @Bean on factoryMethod() == > method which returns a object
+* 3rd party classes which doesn't have spring annoations like @Component, @Service, ....
+* Programatically I want to create instance by passing init values [ Spring uses default constructor]
+
+DataSource --> pool of db connections is managed by Spring Container
+
+@Configuration
+public class AppConfig {
+	@Bean("datasource")
+	public DataSource getDataSource() {
+		ComboPooledDataSource cpds = new ComboPooledDataSource();
+		cpds.setDriverClass( "org.postgresql.Driver" ); //loads the jdbc driver            
+		cpds.setJdbcUrl( "jdbc:postgresql://localhost/testdb" );
+		cpds.setUser("swaldman");                                  
+		cpds.setPassword("test-password");                                  
+			
+		// the settings below are optional -- c3p0 can work with defaults
+		cpds.setMinPoolSize(5);                                     
+		cpds.setAcquireIncrement(5);
+		cpds.setMaxPoolSize(20);
+		return cpds;
+	}
+}
+
+@Repository
+public class BookDaoImpl implments BookDao {
+	@Autowired
+	DataSource ds; 
+}
+
+=========
+Default scope of bean is "singleton"
+
+@Repository("mongo")
+@Scope("request")
+public class BookDaoMongoImpl implements BookDao {
+	
+}
+
+@Scope("session")
+Per user, multiple requests
+Login bean is created; use it for multiple requests from same client
+logout bean is destroyed
+
+@Scope("proptotype")
+
+
+
+@Repository("mongo")
+@Scope("prototype")
+public class BookDaoMongoImpl implements BookDao {
+	
+}
+
+@Service
+public class AService {
+	@Autowired
+	BookDao bookDao;
+}
+
+
+@Service
+public class BService {
+	@Autowired
+	BookDao bookDao;
+}
+
+AService gets one instance of BookDaoMongoImpl
+BService gets another instance of BookDaoMongoImpl
+
+============================
+
+@Resume 4:10
+
