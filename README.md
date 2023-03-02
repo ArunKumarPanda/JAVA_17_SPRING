@@ -833,5 +833,104 @@ BService gets another instance of BookDaoMongoImpl
 
 ============================
 
-@Resume 4:10
+Spring & ORM
+
+ORM --> Object Relational Mapping
+
+Class <-----> Relational Database Table
+instance variables <----> columns of table
+
+ ORM generates SQL based on mapping and contains APIs to do CRUD operations
+
+ Application ==> JPA specification ==> ORM ==> JDBC ==> RDBMS
+
+ ORM --> Hibernate / OpenJPA/ KODO / TopLink /..
+
+ * Entity (objects mapped to RDBMS table)
+ * PersistenceContext
+ * DataSource
+ * EntityManagerFactory
+ * EntityManager
+
+@Configuration
+public class AppConfig {
+	@Bean("datasource")
+	public DataSource getDataSource() {
+		ComboPooledDataSource cpds = new ComboPooledDataSource();
+		cpds.setDriverClass( "org.postgresql.Driver" ); //loads the jdbc driver            
+		cpds.setJdbcUrl( "jdbc:postgresql://localhost/testdb" );
+		cpds.setUser("swaldman");                                  
+		cpds.setPassword("test-password");                                  
+			
+		// the settings below are optional -- c3p0 can work with defaults
+		cpds.setMinPoolSize(5);                                     
+		cpds.setAcquireIncrement(5);
+		cpds.setMaxPoolSize(20);
+		return cpds;
+	}
+
+	@Bean
+	public EntityManagerFactory getEmf(DataSource ds) {
+		LocalContainerEntityManagerFactory emf = new ...
+		emf.setJPAVendor(new HibernateJPAVendor());
+		emf.setPackagesToScan("com.adobe.prj.entity");
+		emf.setDataSource(ds);
+		...
+		return emf;
+	}
+}
+
+@Respository
+public class BookDaoJpaImpl implements BooDao {
+	@PersistanceContext
+	EntityManager em;
+
+	addBook(Book b) {
+		em.persist(b);
+	}
+
+	Book getbook(int id) {
+		em.find(Book.class, id);
+	}
+}
+
+======
+Spring Data JPA simplfied using ORM
+
+dependencies:
+Spring Boot Devtools --> re-run spring container for every changes
+Lombok --> Simplifies creating classes with constructor/ getter, setter / hashCode, equals
+MySQL --> RDBMS driver
+Spring data JPA ==> JPA layer for ORM
+
+https://mvnrepository.com/
+search lombok
+ lombok 1.18.26 => jar download
+
+ java -jar lombok-1.18.26.jar
+
+
+create database DB_SPRING;
+
+spring.jpa.hibernate.ddl-auto=update
+options can be "create-drop", "update", "validate", "none"
+
+1) create-drop
+create tables based on mappings on application start and delete tables on exit
+2) update
+create table if not exists; if exists uses it; if alter required do it
+3) validate
+table already exists in DB; map to it --> if doesn't match throw errors
+4) none
+I write my own scripts 
+
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+ORM operatios --> i need to log SQLs generated
+
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+ORM --> to generate SQL for MySQL8 version
+
+
 
