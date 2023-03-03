@@ -13,7 +13,7 @@ import com.adobe.prj.entity.Order;
 import com.adobe.prj.entity.Product;
 import com.adobe.prj.service.OrderService;
 
-@Component
+//@Component
 public class OrderCrudConfig implements CommandLineRunner {
 	@Autowired
 	OrderService service;

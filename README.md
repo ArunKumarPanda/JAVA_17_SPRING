@@ -1177,3 +1177,194 @@ Order JSON:
 		{"product": {id:2}, quantity:1}
 	]
 }
+
+Weekend Task:
+
+employees
+email   		name
+a@adobe.com		Anitha
+
+companies
+id  name  
+1	Acme
+
+projects
+pid name 		company_fk start_date  		end_date
+1   SomeProj	1			10-03-2019		null
+2	secondProj  2			9-2-2015		10-5-2022
+
+class EmployeeProject{
+	Project project
+	Employee employee;
+}
+
+project_employees
+id project_fk employee_fk 		start_date 		end_date 	role
+1  1			a@adobe.com		10-03-2019		30-9-2020	junior_developer
+
+
+1) insert employees
+2) insert companies
+3) insert project --> has relatioship with compnany
+4) Assign Employees to Project [ Employee and Project records should exist]
+
+===========
+Building RESTful Web services:
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+--> Spring boot by adding above dependency gives the below config:
+1) Embedded TomcatServer --> by default runs on port 8080
+to change
+application.properties
+server.port=9999
+
+2) HttpMessageHandler --> jackson library
+
+Java <--> JSON
+a) jackson
+b) jettison
+c) GSON
+d) Moxy
+
+3) DispatcherServlet --> FrontController --> intercept all HTTP requests from client
+and delegate to different @Controller or @RestController by using HandlerMapping
+
+
+@RestController
+@RequestMapping("api/products")
+public class ProductController {
+	@GetMapping()
+	m1(){}
+
+	@PostMapping()
+	m2() {}
+}
+
+@RestController
+@RequestMapping("api/customer")
+public class CustomerController {
+	@GetMapping()
+	x(){}
+
+	@PostMapping()
+	y() {}
+}
+
+HttpMessageHandler:
+HttpHeaders:
+Accept: application/json
+Accept: text/xml
+
+to write response to client
+
+Content-type:applcation/json
+content-type:text/xml
+
+JSON data coming as payload from client is converted to Java using HttpMessageHandler --> Jackson
+
+ContentNegotiationHandler
+
+RESTful Web services:
+REST --> Representational State Transfer --> distibuted hypermedia systems --> 2000 Roy Fielding
+
+HTTP 1.1 ==> GET POST PUT DELETE PATCH
+
+Resource ==> any information on server
+
+URI to identify the resource
+http://localhost:8080/api/products
+http://localhost:8080/api/orders
+
+* Collection 
+A collection resource is a server-managed resource
+
+* store
+store is client-managed resource
+Spotify
+http://localhost:8080/users/banu@gmail.com/playlists
+
+* Controller
+like executable functions
+http://localhost:8080/users/banu@gmail.com/playlists/play
+
+use HTTP methods to perform CRUD operations:
+GET for READ
+POST for CREATE a sub-resource
+DELETE for delete a sub-resource
+PUT/PATCH for update a sub-resource
+
+
+@Controller ==> Server Side Rendering; return ModelView
+
+@RestController ==> RESTful services ==> server representation of resource [json/xml] to client ==> CSR; return JSON/XML/CSV/RSS/Atom
+
+Multi-part Request handling
+
+POSTMAN
+
+POST http://localhost:8080/api/products
+Headers:
+Accept: application/json
+Content-type: application/json
+
+Body Raw --> JSON
+{
+    "name": "Wacom",
+    "price": 8900.00,
+    "quantity": 100
+}
+
+---
+
+PUT http://localhost:8080/api/products/4
+
+Headers:
+Accept: application/json
+Content-type: application/json 	
+
+
+Body Raw --> JSON
+{
+    "price": 38900.00
+}
+
+Task:
+CustomerController
+OrderController ==> PostMapping and GetMapping
+
+for POST:
+{
+		"customer": {"email":"a@adobe.com"},
+		"items": [
+			{"product": {id:1}, quantity:2},
+			{"product": {id:2}, quantity:1}
+			]
+		}
+}
+
+---
+
+AOP, ExceptionHandling, Validate input fields, Testing Controller
+
+http://localhost:8080/products
+
+@Controller
+public class ProductController {
+	@RequestMapping(value="/products", method=HttpMethod.GET)
+	public ModelAndView listProduct() {
+		ModelAndView mav = new ModelAndView();
+		mav.addModel("products", service.getProducts());
+		mav.setViewName("print.jsp")
+	}
+}
+
+this redirects to print.jsp
+
+<c:forEach items={products} val="product">
+	Name : {product.name} <br />
+	Price : {produce.price}
+</c:forEach>
+
+==> HTML

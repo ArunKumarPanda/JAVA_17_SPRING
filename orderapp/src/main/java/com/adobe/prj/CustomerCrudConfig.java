@@ -2,12 +2,12 @@ package com.adobe.prj;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 import com.adobe.prj.entity.Customer;
 import com.adobe.prj.service.OrderService;
 
 //@Component
+
 public class CustomerCrudConfig implements CommandLineRunner {
 	@Autowired
 	OrderService service;
