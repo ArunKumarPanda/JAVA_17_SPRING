@@ -982,3 +982,140 @@ select name, price from Book 			select title,amount from books
 
 
 
+==============
+
+Day 4
+
+Recap: SpringBoot @SpringApplication, @Bean, @Primary, @Profile..
+
+Spring Data Jpa: simplifies using ORM
+interface JpaRepository<Entity,PK> ==> Spring Data JPA creates Repository classes with all the provided methods for CRUD operations.
+We can write custom methods in interface; also use @Query ==> can take SQL or JP-QL
+
+SQL uses table names and columns, not case-sensitive while using table and column names
+JP-QL uses class names and fields, case-sensitive for class names and fields. JP-QL is polymorphic
+
+Product, Tv extends Product, Mobile extends Product ==> we can use different strategies in database to store
+
+a single table to store objects of Prodct, Tv and mobile using discriminator column
+
+products
+id   name     		price     connectivit screen_type screen_size 		type
+1    iPhone   		980000    4G			null 		null 			mobile
+2    SonyBravia    1280000    null			OLED 		60 inch 		tv
+
+OR 
+
+products table
+id name price
+
+mobile table
+id connectivity
+
+tv table
+id screen_type  screen_size
+
+"from Product" ==> Polymorphic ==> gets data from all the 3 tables
+
+"from Object" ==> data from all the tables of the database will be fetched
+
+
+JDBC:
+executeQuery() for SELECT statements returns ResultSet
+executeUpdate() for INSERT, DELETE and UPDATE Sql ==> retunrs int
+
+By default for all pre-defined methods to perform INSERT or DELETE Transcation is enabled. custom methods we need to explicitly write Tx boundaries
+```
+@Transactional
+public Product updateProduct(int id, double price) {
+		productDao.updateProduct(id, price);
+		return this.getProductById(id);
+}
+```
+Declarative Tx using @Transactional 
+begins Transaction when method is called.
+If no exception in method it commits
+if any exception in method and not handled it rollsback
+--> Abstraction
+
+Programatic Transaction:
+JDBC:
+public void addBook(Book b) {
+		Connetion con = null;
+		try{
+			con = DriverManager.getConnection(URL);
+			con.setAutoCommit(false);
+			String SQL  = "insert into products values (?,?,?,?)"
+			PreparedStatement ps = con.prepareStatement(SQL);
+			ps.set..	
+			ps.exceuteUpdate();
+			con.commit();
+		} catch(SQLException ex) {
+			con.rollback();
+		} finally {
+			con.close();
+		}
+}
+
+Hibernate not JPA:
+public void addBook(Book b) {
+		SessionFactory = ..
+		Session ses = null;
+		Transaction tx;
+		try{
+			ses =factory.getSession();
+			tx = ses.beginTransaction();
+			ses.save(b);
+			tx.commit();
+		} catch(SQLException ex) {
+			tx.rollback();
+		} finally {
+			session.close();
+		}
+}
+
+---
+@Transactional is declarative and Distributed transaction
+uses 2 phase commit protocol to handle multiple resource
+
+atomic operations ==> combine in method and mark it as @Transcational
+
+Banking example:
+credit
+debit
+insert into transaction
+send SMS
+
+orders
+
+oid  order_date  		customer_fk  		total
+1    1-03-2023 1:45		a@adobe.com			540000.00
+2    28-02-2023 3:12	a@adobe.com			7000.00
+3 	 1-03				b@adobe.com 		900
+
+
+items
+item_id   product_fk    order_fk  quantity  amount
+100       1              1        1         98000.00
+101 	  2              1        2         1600.00
+
+https://sqlzoo.net/wiki/SQL_Tutorial
+
+@OneToOne
+@ManyToOne
+@OneToMany
+@ManyToMany
+
+@ManyToOne introduces foriegn key in owning table ==> orders
+@OneToMany introduces foriegn key in child table ==> items
+
+
+@ManyToOne
+@JoinColumn(name="customer_fk")
+private Customer customer;
+	
+@OneToMany
+@JoinColumn(name="order_fk")
+private List<Item> items = new ArrayList<>();
+
+

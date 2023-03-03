@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.adobe.prj.dao.ProductDao;
 import com.adobe.prj.entity.Product;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class OrderService {
 	@Autowired
@@ -33,5 +35,11 @@ public class OrderService {
 	
 	public List<Product> getByRange(double low, double high) {
 		return productDao.getByRange(low, high);
+	}
+	
+	@Transactional
+	public Product updateProduct(int id, double price) {
+		productDao.updateProduct(id, price);
+		return this.getProductById(id);
 	}
 }

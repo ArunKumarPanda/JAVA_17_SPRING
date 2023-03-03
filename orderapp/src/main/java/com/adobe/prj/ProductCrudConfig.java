@@ -19,7 +19,13 @@ public class ProductCrudConfig implements CommandLineRunner{
 		//addProducts();
 //		listProducts();
 //		getById();
-		getByRange();
+//		getByRange();
+		updateProduct();
+	}
+
+	private void updateProduct() {
+		Product p = service.updateProduct(2, 982.00);
+		System.out.println(p);
 	}
 
 	private void getByRange() {
