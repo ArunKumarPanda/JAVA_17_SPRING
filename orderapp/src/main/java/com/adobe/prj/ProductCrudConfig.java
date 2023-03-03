@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.adobe.prj.entity.Product;
 import com.adobe.prj.service.OrderService;
 
-@Component
+//@Component
 public class ProductCrudConfig implements CommandLineRunner{
 	@Autowired
 	private OrderService service;
@@ -20,7 +20,7 @@ public class ProductCrudConfig implements CommandLineRunner{
 //		listProducts();
 //		getById();
 //		getByRange();
-		updateProduct();
+//		updateProduct();
 	}
 
 	private void updateProduct() {

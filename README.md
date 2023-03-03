@@ -1119,3 +1119,61 @@ private Customer customer;
 private List<Item> items = new ArrayList<>();
 
 
+===
+
+Without Cascade:
+@OneToMany()
+@JoinColumn(name="order_fk")
+private List<Item> items = new ArrayList<>();
+
+Order o = ,,
+o has 4 items i1, i2, i3, i4
+
+em.save(o);
+em.save(i1);
+em.save(i2);
+em.save(i3);
+em.save(i3);
+
+to delete:
+em.delete(o);
+em.delete(i1);
+em.delete(i2);
+em.delete(i3);
+em.delete(i4);
+
+With Cascade:
+@OneToMany(cascade = CascadeType.ALL)
+@JoinColumn(name="order_fk")
+private List<Item> items = new ArrayList<>();
+
+
+Order o = ,,
+o has 4 items i1, i2, i3, i4
+
+em.save(o); ==> takes care of saving all items
+em.delete(o); ==> takes care of deleting all items of the order
+
+--> no Need for ItemDao
+
+====
+
+fetch = FetchType.EAGER
+orderDao.findById(1);
+gets order and all items items into memory
+
+fetch = FetchType.LAZY
+orderDao.findById(1); ==> select * from orders where oid = 1;
+Doesn't fetch items;
+itemDao.getItemsForOrder(1);
+
+=======
+
+Order JSON:
+{
+	"customer": {"email":"a@adobe.com"},
+	"items": [
+		{"product": {id:1}, quantity:2},
+		{"product": {id:2}, quantity:1}
+	]
+}
