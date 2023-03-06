@@ -8,6 +8,7 @@ import javax.management.RuntimeErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.adobe.prj.api.ResourceNotFoundException;
 import com.adobe.prj.dao.CustomerDao;
 import com.adobe.prj.dao.OrderDao;
 import com.adobe.prj.dao.ProductDao;
@@ -74,13 +75,12 @@ public class OrderService {
 		return productDao.findAll();
 	}
 	
-	public Product getProductById(int id) {
+	public Product getProductById(int id) throws ResourceNotFoundException {
 		Optional<Product> opt = productDao.findById(id);
 		if(opt.isPresent()) {
 			return opt.get();
-		} else {
-			return null;
-		}
+		} 
+		throw new ResourceNotFoundException("Product with id : " + id + " doesn't exist!!!");
 	}
 	
 	public Product addProduct(Product p) {
@@ -92,7 +92,7 @@ public class OrderService {
 	}
 	
 	@Transactional
-	public Product updateProduct(int id, double price) {
+	public Product updateProduct(int id, double price) throws ResourceNotFoundException {
 		productDao.updateProduct(id, price);
 		return this.getProductById(id);
 	}

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import com.adobe.prj.api.ResourceNotFoundException;
 import com.adobe.prj.entity.Product;
 import com.adobe.prj.service.OrderService;
 
@@ -23,7 +24,7 @@ public class ProductCrudConfig implements CommandLineRunner{
 //		updateProduct();
 	}
 
-	private void updateProduct() {
+	private void updateProduct() throws ResourceNotFoundException {
 		Product p = service.updateProduct(2, 982.00);
 		System.out.println(p);
 	}
@@ -34,7 +35,7 @@ public class ProductCrudConfig implements CommandLineRunner{
 			System.out.println(p); // toString
 		}
 	}
-	private void getById() {
+	private void getById() throws ResourceNotFoundException {
 		System.out.println("By ID ----->");
 		Product p = service.getProductById(1);
 		System.out.println(p);

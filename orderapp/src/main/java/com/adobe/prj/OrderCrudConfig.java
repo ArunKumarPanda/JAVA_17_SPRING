@@ -20,23 +20,33 @@ public class OrderCrudConfig implements CommandLineRunner {
 	
 	@Override
 	public void run(String... args) throws Exception {
-		Order order = new Order();
-		order.setCustomer(Customer.builder().email("b@adobe.com").build());
-		List<Item> items = new ArrayList<>();
-		Item i1 = new Item();
-		i1.setProduct(Product.builder().id(1).build());
-		i1.setQuantity(1);
+//		Order order = new Order();
+//		order.setCustomer(Customer.builder().email("b@adobe.com").build());
+//		List<Item> items = new ArrayList<>();
+//		Item i1 = new Item();
+//		i1.setProduct(Product.builder().id(1).build());
+//		i1.setQuantity(1);
+//		
+//		Item i2 = new Item();
+//		i2.setProduct(Product.builder().id(2).build());
+//		i2.setQuantity(3);
+//		
+//		items.add(i1);
+//		items.add(i2);
+//		
+//		order.setItems(items);
+//		
+//		service.placeOrder(order);
 		
-		Item i2 = new Item();
-		i2.setProduct(Product.builder().id(2).build());
-		i2.setQuantity(3);
+		List<Order> orders = service.getOrders();
 		
-		items.add(i1);
-		items.add(i2);
-		
-		order.setItems(items);
-		
-		service.placeOrder(order);
+		for(Order o : orders) {
+			System.out.println(o);
+			List<Item> items = o.getItems();
+			for(Item i : items) {
+				System.out.println(i); // Works if EAGER fetch
+			}
+		}
 	}
-
+	
 }

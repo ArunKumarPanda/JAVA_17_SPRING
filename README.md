@@ -1189,9 +1189,10 @@ id  name
 1	Acme
 
 projects
-pid name 		company_fk start_date  		end_date
-1   SomeProj	1			10-03-2019		null
+pid name 		company_fk start_date  		end_date  
+1   SomeProj	1			10-03-2019		null		
 2	secondProj  2			9-2-2015		10-5-2022
+
 
 class EmployeeProject{
 	Project project
@@ -1201,7 +1202,14 @@ class EmployeeProject{
 project_employees
 id project_fk employee_fk 		start_date 		end_date 	role
 1  1			a@adobe.com		10-03-2019		30-9-2020	junior_developer
+2  2            a@adobe.com
+3  1  			b@adobe.com
 
+Project --> company is @ManyToOne
+EmployeeProject ---> Project is @ManyToOne
+EmployeeProject --> Employee is @ManyToOne
+
+No direct relationship between Employee and Project
 
 1) insert employees
 2) insert companies
@@ -1368,3 +1376,262 @@ this redirects to print.jsp
 </c:forEach>
 
 ==> HTML
+
+===================
+
+Day 5:
+
+Recap: --> Spring Data JPA and RestController
+@OneToMany
+@ManyToOne
+@JoinColumn
+Cascade and Lazy Fetching
+
+@RestController, @RequestMapping, @ResponseBody, @RequestBody, @GetMapping, @PostMapping, @PutMapping, @DeleteMapping, @PathVariable, @RequestParam
+
+=============
+
+Bi-directional association:
+
+class Customer {
+
+	@OneToMany(mappedBy="customer")
+	private List<Order> orders = new ArrayList<>();
+}
+
+class Order {
+
+	@ManyToOne(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
+	@Joincolumn(name="customer_fk")
+	private Customer customer;
+}
+
+Customer c = customerDao.findById("a@adobe.com");
+
+List<Order> orders = c.getOrders();
+
+Other side:
+
+Order o = orderDao.findById(1);
+Customer c = o.getCustomer();
+
+
+==============================================
+
+Movie
+	id
+	name
+
+Actor
+	id
+	name
+
+MovieActor
+actor_id 	movie_id	role
+1			1			Antognist
+1			2			Comedian
+
+MovieActor --> ManyToOne Actor
+MovieActor --> ManyTone Movie
+
+
+----
+
+One to One
+
+Employee
+	email
+	name
+	@OneToOne
+	@JoinColumn("laptop_fk)
+	Laptop laptop;
+
+Laptop
+	serialNo
+	RAM
+	SDD
+	Screen
+
+employees
+email   		name  		laptop_fk
+a@adobe.com		Anitha		KLR421
+x@adobe.com  	Xi			YLK123
+
+laptop
+serail_no   ram 	sdd screen
+YLK123
+KLR421
+
+
+====
+EAGER:
+  select
+        o1_0.oid,
+        o1_0.customer_fk,
+        o1_0.order_date,
+        o1_0.total 
+    from
+        orders o1_0
+Hibernate: 
+    select
+        c1_0.email,
+        c1_0.first_name 
+    from
+        customers c1_0 
+    where
+        c1_0.email=?
+Hibernate: 
+    select
+        i1_0.order_fk,
+        i1_0.item_id,
+        i1_0.amount,
+        p1_0.id,
+        p1_0.name,
+        p1_0.price,
+        p1_0.qty,
+        i1_0.quantity 
+    from
+        items i1_0 
+    left join
+        products p1_0 
+            on p1_0.id=i1_0.product_fk 
+    where
+        i1_0.order_fk=?
+
+	
+LAZY:
+get orders and not items:
+Hibernate: 
+    select
+        o1_0.oid,
+        o1_0.customer_fk,
+        o1_0.order_date,
+        o1_0.total 
+    from
+        orders o1_0
+Hibernate: 
+    select
+        c1_0.email,
+        c1_0.first_name 
+    from
+        customers c1_0 
+    where
+        c1_0.email=?
+
+ManyToOne is EAGER fetch by default
+OneToMany is LAZY fetch by default
+
+====
+
+ManyToMany is a very rare association
+
+Project <--> Employee
+
+one project can have multiple employees
+employee can work in multipl projects
+
+project											employee
+pid name start_date end_date					email 	name hire_date  end_date
+
+project_employee [ link table]
+pid  email
+1		a@adobe.com
+2		b@adobe.com
+3		a@adobe.com
+
+Where can i add start_date and end_date of project
+where can i add start_date and end_date of employee
+
+? Need to add when employee was associated with project and role he played
+project_employee --> EmployeeProject association entity class
+pid  email				start_date   end_date   role
+1		a@adobe.com		A				B		jr.developer
+2		b@adobe.com
+3		a@adobe.com		X				Y		TL
+
+Project *<---->1 EmployeeProject 1<---->* Employee
+
+ManyToMany
+
+mysql> select * from users;
++----+--------+
+| id | name   |
++----+--------+
+|  7 | Rahul  |
+|  8 | Swetha |
++----+--------+
+2 rows in set (0.00 sec)
+
+mysql> select * from roles;
++-------+------------------------------------------+
+| role  | role_description                         |
++-------+------------------------------------------+
+| ADMIN | Administrator can access all resources   |
+| GUEST | Guest users can access only landing page |
++-------+------------------------------------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from user_role;
++---------+-----------+
+| user_id | role_name |
++---------+-----------+
+|       7 | ADMIN     |
+|       7 | GUEST     |
+|       8 | GUEST     |
++---------+-----------+
+
+================
+
+Exception Handling and Validation
+
+AOP Aspect Oriented Programming
+--> Why?
+eliminates Cross-cutting concerns which lead to code-tangling and code-scattering
+
+Aspect --> cross-cutting concern
+Example: Logging, Profile, Transaction, Exception Handling,...
+
+public class MyService {
+	doTask() {
+		metrics.record();
+		log.debug("started task!!");
+		try {
+		tx.begin();
+			// actual code
+		tx.commit();
+		} catch(Exception ex) {
+			tx.rollback();
+		}
+		log.debug("completed!!")
+		metrics.endRecord();
+	}
+}
+
+
+public class AnotherService {
+	doAnotherTask() {
+		metrics.record();
+		log.debug("started task!!");
+		try {
+		tx.begin();
+			// actual code
+		tx.commit();
+		} catch(Exception ex) {
+			tx.rollback();
+		}
+
+		metrics.endRecord();
+	}
+}
+
+Aspect --> concern generally leading to code-tangling and code-scattering
+JointPoint --> a place in code where aspect can be weaved {method and exception}
+PointCut --> selected JoinPoint
+Advice --> How Aspect is weaved to pointcut ==> Before, After, Around, AfterThrowing, AfterReturing
+https://docs.spring.io/spring-framework/docs/2.0.x/reference/aop.html
+execution(modifiers-pattern? ret-type-pattern declaring-type-pattern? name-pattern(param-pattern)
+          throws-pattern?)
+
+
+=======
+

@@ -38,7 +38,7 @@ public class ProductController {
 
 	// http://localhost:8080/api/products/2
 	@GetMapping("/{id}")
-	public @ResponseBody Product getProduct(@PathVariable("id") int id) {
+	public @ResponseBody Product getProduct(@PathVariable("id") int id) throws ResourceNotFoundException {
 		return service.getProductById(id);
 	}
 	
@@ -51,7 +51,7 @@ public class ProductController {
 	
 	// PUT http://localhost:8080/api/products/1
 	@PutMapping("/{id}")
-	public Product updateProduct(@PathVariable("id") int id, @RequestBody Product p) {
+	public Product updateProduct(@PathVariable("id") int id, @RequestBody Product p) throws ResourceNotFoundException {
 		return service.updateProduct(id, p.getPrice());
 	}
 }
