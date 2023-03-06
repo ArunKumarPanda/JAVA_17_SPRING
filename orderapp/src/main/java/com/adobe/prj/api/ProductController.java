@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,8 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.adobe.prj.entity.Product;
 import com.adobe.prj.service.OrderService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("api/products")
+@Validated
 public class ProductController {
 	@Autowired
 	private OrderService service;
@@ -44,7 +48,7 @@ public class ProductController {
 	
 	// POST {name:"A", "price":11} ==> content-type:application/json
 	@PostMapping()
-	public ResponseEntity<Product> addProduct(@RequestBody Product p) {
+	public ResponseEntity<Product> addProduct(@RequestBody @Valid Product p) {
 		service.addProduct(p);
 		return new ResponseEntity<Product>(p, HttpStatus.CREATED);
 	}

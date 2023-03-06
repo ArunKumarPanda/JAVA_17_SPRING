@@ -1634,4 +1634,65 @@ execution(modifiers-pattern? ret-type-pattern declaring-type-pattern? name-patte
 
 
 =======
+Bean Validation
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+
+Specification are provided by javax.validation.constraints
+
+Implementation --> Since Hibernate ORM is included, we get Hibernate Implmentation of javax.validation.constraints
+
+```
+public class Product {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	
+	@NotBlank(message="Name is required")
+	private String name;
+	
+	@Min(value = 10, message="Price ${validatedValue} should be more than {value}")
+	private double price;
+	
+	
+	@Min(value = 0, message="Quantity ${validatedValue} should be more than {value}")
+	@Column(name="qty")
+	private int quantity;
+}
+
+		
+@Validated
+public class ProductController {
+	public ResponseEntity<Product> addProduct(@RequestBody @Valid Product p) {
+
+```
+POST http://localhost:8080/api/products
+{
+    "name": "",
+    "price": -100,
+    "quantity": 0
+}
+MethodArgumentNotValidException:  
+[Field error in object 'product' on field 'price': rejected value [-100.0]; codes [Min.product.price,Min.price,Min.double,Min];  [product.price,price]; arguments []; 
+default message [price],10]; 
+default message [Price -100.0 should be more than 10]] 
+
+[Field error in object 'product' on field 'name': rejected value []; codes [NotBlank.product.name,NotBlank.name,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [product.name,name]; arguments []; 
+default message [name]]; 
+default message [Name is required]] ]
+
+{
+    "errors": [
+        "Name is required",
+        "Quantity -990 should be more than 0"
+    ],
+    "timestamp": "2023-03-06T11:09:09.024+00:00"
+}
+
+==============
+
+
+
 
