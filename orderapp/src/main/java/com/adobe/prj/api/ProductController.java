@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.adobe.prj.entity.Product;
 import com.adobe.prj.service.OrderService;
 
+import io.swagger.v3.oas.models.annotations.OpenAPI30;
 import jakarta.validation.Valid;
 
 @RestController
@@ -49,7 +50,7 @@ public class ProductController {
 	// POST {name:"A", "price":11} ==> content-type:application/json
 	@PostMapping()
 	public ResponseEntity<Product> addProduct(@RequestBody @Valid Product p) {
-		service.addProduct(p);
+		p = service.addProduct(p);
 		return new ResponseEntity<Product>(p, HttpStatus.CREATED);
 	}
 	

@@ -45,22 +45,31 @@ public class ProductControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$",hasSize(2)))
 			.andExpect(jsonPath("$[0].name",is("A")));
-		
+
 		verify(service, times(1)).getProducts();
 	}
+	
+	
 	
 	@Test
 	public void addProductTest() throws Exception {
 		Product p = Product.builder().name("test").price(1500.00).quantity(100).build();
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper(); // JAva  <--> JSON
 		String json = mapper.writeValueAsString(p); 
-		
+//		
+//		json = """
+//				{
+//					name:"A",
+//					price:45454
+//				}
+//				""";
 		when(service.addProduct(Mockito.any(Product.class)))
-			.thenReturn(Mockito.any(Product.class)); // mocking
+			.thenReturn(p); // mocking
 		
 		mockMvc.perform(post("/api/products")
 		 .content(json)
 		 .contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$.name", is("test") ))
 		.andExpect(status().isCreated());
 		
 		verify(service, times(1)).addProduct(Mockito.any(Product.class));
@@ -71,7 +80,6 @@ public class ProductControllerTest {
 		Product p = Product.builder().name("").price(0.00).quantity(-80).build();
 		ObjectMapper mapper = new ObjectMapper();
 		String json = mapper.writeValueAsString(p); 
-	 
 		
 		mockMvc.perform(post("/api/products")
 		 .content(json)

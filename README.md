@@ -1692,6 +1692,126 @@ default message [Name is required]] ]
 }
 
 ==============
+no need to explictly --> included by default
+
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+</dependency>
+
+Unit Testing RestControllers
+
+* JUnit or TestNG ==> Spring Boot by default configures JUnit-Jupiter version
+* Mockito ==> By default spring boot confures Mockito for Mocking dependecy {EasyMock, JMock,..}
+
+Testing in isolation
+Dependency has to be mocked
+RestController ===> Service ==> Dao ==> database
+
+to test Dao we need to mock database
+to test service we need to mock DAO layer
+to test controller we need to mock service
+
+* json-path library to handle json data
+https://jsonpath.com/
+
+* Hamcrest ==> assertion library
+https://hamcrest.org/JavaHamcrest/tutorial
+
+Write tests in
+src/test/java
+
+1) 
+@WebMvcTest(ProductController.class)
+
+ Annotation that can be used for a Spring MVC test that focuses <strong>only</strong> on Spring MVC components.
+* Spring Container contains only MVC components
+* Creates DispatcherTestServlet as FronController
+* creates MockMvc for HTTP requests [ GET, POST, PUT, DELETE]
+* Loads only ProductController.class not other RestController and Controller
+
+this won't create beans of service / repos/ other components..
+
+POST http://localhost:8080/api/orders
+
+```
+{
+		"customer": {"email":"b@adobe.com"},
+		"items": [
+			{"product": {"id":1}, "quantity":1},
+			{"product": {"id":2}, "quantity":5}
+			]
+		}
+	}
+
+```
+
+API Documentation:
+* RAML --> YAML format --> Programmatic config
+/books:
+  /{bookTitle}
+    get:
+      queryParameters:
+        author:
+          displayName: Author
+          type: string
+          description: An author's full name
+          example: Mary Roach
+          required: false
+        publicationYear:
+          displayName: Pub Year
+          type: number
+          description: The year released for the first time in the US
+          example: 1984
+          required: false
+        rating:
+          displayName: Rating
+          type: number
+          description: Average rating (1-5) submitted by users
+          example: 3.14
+          required: false
+        isbn:
+          displayName: ISBN
+          type: string
+          minLength: 10
+          example: 0321736079
+    put:
+      queryParameters:
+        access_token:
+          displayName: Access Token
+          type: string
+          description: Token giving you permission to make call
+          required: true
+
+* openAPI --> Auto configuration
+<dependency>
+	<groupId>org.springdoc</groupId>
+	<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+	<version>2.0.2</version>
+</dependency>
+	
+application.properties
+springdoc.paths-to-match=/api/**, /admin/**
+#springdoc.packages-to-scan=com.adobe.prj.api
+
+http://localhost:8080/v3/api-docs
+
+REACT or Angular or Vue ==> create a UI for the DOCumentation
+
+http://localhost:8080/swagger-ui/index.html
+
+
+==========
+
+RestTemplate, Webclient, Cache, @Schedule, json-patch, @HttpExchange, ...
+
+
+
+
+
+
+
 
 
 
