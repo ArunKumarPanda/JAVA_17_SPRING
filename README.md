@@ -1927,4 +1927,183 @@ public class ProductController {
 		}
 	}
 
+=============
+
+RESTful Characteristis:
+1) Client-Server
+2) Uniform Resource URL
+GET http://localhost:8080/api/products
+3) Stateless { No Session tracking } 
+4) Caching
+
+Client-side Caching
+Http Headers: 
+* Cache-Control [Cache-Control: max-age=604800] --> can lead to State data
+* ETag --> HTTP response header is an identifier for a specific version of a resource.
+
+@GetMapping("/cache/{id}")
+	public ResponseEntity<Product> getProductCache(@PathVariable("id") int id) throws ResourceNotFoundException {
+		Product p = service.getProductById(id);
+		return ResponseEntity.ok().eTag(Long.toString(p.hashCode())).body(p);
+}
+
+http://localhost:8080/cache/3
+Response Header:
+ETag: 77668813
+
+Subsequesnt requests from client:
+http://localhost:8080/cache/3
+Request Header
+If-none-Match: 77668813
+
+Response:
+Status Code 304 NOT Modified [ no Payload ]
+
+ShallowEtagHeaderFilter
+
+--> Not going to reduce Server workload; only reduces Network payload
+
+JPA Version ==> every update it changes the ver column;
+	@Version
+	private int ver;
+
+products
+id  name price  ver
+1   A1   120    2
+
+100 -> 120
+A -> A1
+
+Use @Version for Optimisitic Locking
+
+products
+id  name price  ver
+1   A   120      0
+User 1:
+1, A , 120 ,0
+
+User 2:
+1, A , 120 ,0
+
+
+User 1 commits:
+update products set price = 400, ver = ver + 1 where id = 1 and ver  = 0
+products
+id  name price  ver
+1   A   400      1
+
+User 2 Commit:
+update products set price = 321, ver = ver + 1 where id = 1 and ver =0 
+this tx fails
+Second user has to re-fetch and make changes
+
+First Commit wins; 
+
+Admin should do this:
+Pessimestic Lock: Lock entire table
+select * from products for update;
+
+SERIALIZATION
+
+============
+
+
+GET http://localhost:8080/api/products/cache/2
+ETag: "-831721207"
+{
+    "id": 2,
+    "name": "Logitech mouse",
+    "price": 982.0,
+    "quantity": 92,
+    "ver": 0
+}
+
+Second Request
+GET http://localhost:8080/api/products/cache/2
+Headers:
+Accept:
+Content-type:
+
+Response:
+304 Not Modified
+No Payload
+
+Client Job is reduced --> no need to re-render by REACT /Angular/ Vue
+
+let [product, setProduct] = useState();
+useEffect(() => {
+	axios.get(...).then(response => {
+		if(response.header.SC !== 304) {
+			setProduct(response.data);
+		}
+	})
+},[]);
+
+React -> state
+
+===
+Server Side Caching
+
+JPA ==> First Level Cache enabled by default ==> within @Transactional
+JPA ==> Second Level Cache has to be explicitly configured; Cache shared for multiple requests / multple clients
+https://docs.oracle.com/javaee/6/tutorial/doc/gkjio.html
+
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+CacheManager
+ConcurrentMapCache implementation
+
+Place @EnableCaching on any @configuration file ==> main
+
+@Cacheable(value="productCache", key ="#id")
+@CachePut(value="productCache", key ="#id")
+
+Event Based evict Cache
+@EnableScheduling
+
+
+https://spring.io/blog/2020/11/10/new-in-spring-5-3-improved-cron-expressions
+
+Conditional caching
+SPEL
+@Cacheable(value="productCache", key ="#id", unless="#result != null")
+@GetMapping("/{id}")
+public @ResponseBody Product getProduct(@PathVariable("id") int id)
+
+
+Here the returned value is cached
+@Cacheable(value="productCache", key ="#p.id", condition="#p.price > 5000")
+@PostMapping()
+public Product addProduct(@RequestBody @Valid Product p) {
+	
+=========
+
+docker run -d --name=some-redis -p 6379:6379 redis
+
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+Cannot serialize
+org.springframework.data.redis.serializer.SerializationException: Cannot serialize
+class Product implements Serializable {
+}
+
+Serialization --> process of replicating the state to a stream { outside JVM}
+
+If NodeJS is installed
+sudo npx redis-commander
+
+this is a redis client
+http://localhost:8081/
+
+
+=====================================
+
+
+
+
 

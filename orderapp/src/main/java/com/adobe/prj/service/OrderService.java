@@ -38,6 +38,13 @@ public class OrderService {
 		return customerDao.findById(email).get();
 	}
 	
+	@Transactional
+	public void doTask() {
+		Product p1 = productDao.findById(1).get(); // select * 
+		Product p2 = productDao.findById(1).get();  // first level cache
+		Product p3 = productDao.findById(1).get(); // first level cache
+		Product p4 = productDao.findById(2).get();
+	}
 	/* 
 	  
 	{

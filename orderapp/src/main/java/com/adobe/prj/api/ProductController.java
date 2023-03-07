@@ -3,9 +3,13 @@ package com.adobe.prj.api;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,18 +25,11 @@ import com.adobe.prj.service.OrderService;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.models.annotations.OpenAPI30;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("api/products")
 @Validated
-@Tag(name="products", description="Product API")
 public class ProductController {
 	@Autowired
 	private OrderService service;
@@ -40,6 +37,13 @@ public class ProductController {
 	@Autowired
 	private ObservationRegistry observationRegistry;
 
+	
+	@GetMapping("/cache/{id}")
+	public ResponseEntity<Product> getProductCache(@PathVariable("id") int id) throws ResourceNotFoundException {
+		Product p = service.getProductById(id);
+		return ResponseEntity.ok().eTag(Long.toString(p.hashCode())).body(p);
+	}
+	
 	// http://localhost:8080/api/products
 	// GET http://localhost:8080/api/products?low=1000&high=50000
 	@GetMapping()
@@ -53,17 +57,15 @@ public class ProductController {
 		}
 	}
 
-	@Operation(summary="Get Product by ID")
-//	@ApiResponses(value = {
-//			@ApiResponse(responseCode = "200", 
-//					description = "found the product", 
-//					content = {@Content(mediaType="application/json", 
-//					schema = @Sch(implementation=Product.class))})
-//			})
-
-	// http://localhost:8080/api/products/2
+	@Cacheable(value="productCache", key ="#id")
 	@GetMapping("/{id}")
 	public @ResponseBody Product getProduct(@PathVariable("id") int id) throws ResourceNotFoundException {
+		System.out.println("Cache Miss!!!");
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		return service.getProductById(id);
 	}
 	
@@ -74,9 +76,17 @@ public class ProductController {
 		return new ResponseEntity<Product>(p, HttpStatus.CREATED);
 	}
 	
+	@CachePut(value="productCache", key ="#id")
 	// PUT http://localhost:8080/api/products/1
 	@PutMapping("/{id}")
 	public Product updateProduct(@PathVariable("id") int id, @RequestBody Product p) throws ResourceNotFoundException {
 		return service.updateProduct(id, p.getPrice());
+	}
+	
+	// Avoid
+	@CacheEvict(value="productCache", key="#id")
+	@DeleteMapping("/{id}")
+	public String delete(@PathVariable("id") int id) {
+		return "deleted!!!";
 	}
 }
