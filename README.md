@@ -1864,14 +1864,67 @@ Spring Boot Actuator comes with several pre-defined health indicators:
 ...
 
 http://localhost:8080/actuator/health
+http://localhost:8080/actuator/metrics
+http://localhost:8080/actuator/metrics/http.server.requests
+
 ab -n 500 -c 100 http://localhost:8080/api/products
+
 Windows :--> install ApacheHTTP Daemon server
 
 
+===
+Prometheus ==> Time Series Database
+Prometheus collects metrics from targets by scraping metrics HTTP endpoints.
+
+<dependency>
+		<groupId>io.micrometer</groupId>
+		<artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+
+prometheus.yml
+rules.yml
+start.md
+
+PushGateways --> will be helpful when Pull requests are not supported 
+
+====
+
+Grafana:
+login admin/admin
+Add DataSource --> select Promethues
+Address: http://host.docker.internal:9090
+
+Test and Save
+
+---
+
+DashBoards:
+Metric: system_cpu_usage Add Panel
+http_server_request_count Add Panel
 
 
+========
 
+Observability with Spring Boot 3
 
+public class ProductController {
+	@Autowired
+	private OrderService service;
+	
+	@Autowired
+	private ObservationRegistry observationRegistry;
 
+	// http://localhost:8080/api/products
+	// GET http://localhost:8080/api/products?low=1000&high=50000
+	@GetMapping()
+	public @ResponseBody List<Product> getProducts(@RequestParam(name="low", defaultValue = "0.0") double low, 
+			@RequestParam(name="high", defaultValue = "0.0") double high) {
+		if(low == 0.0 && high == 0.0) {
+			return Observation.createNotStarted("getProducts", observationRegistry)
+					.observe(() -> service.getProducts());
+		} else {
+			return service.getByRange(low, high);
+		}
+	}
 
 

@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.adobe.prj.entity.Product;
 import com.adobe.prj.service.OrderService;
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,6 +37,8 @@ public class ProductController {
 	@Autowired
 	private OrderService service;
 	
+	@Autowired
+	private ObservationRegistry observationRegistry;
 
 	// http://localhost:8080/api/products
 	// GET http://localhost:8080/api/products?low=1000&high=50000
@@ -42,7 +46,8 @@ public class ProductController {
 	public @ResponseBody List<Product> getProducts(@RequestParam(name="low", defaultValue = "0.0") double low, 
 			@RequestParam(name="high", defaultValue = "0.0") double high) {
 		if(low == 0.0 && high == 0.0) {
-			return service.getProducts();
+			return Observation.createNotStarted("getProducts", observationRegistry)
+					.observe(() -> service.getProducts());
 		} else {
 			return service.getByRange(low, high);
 		}
