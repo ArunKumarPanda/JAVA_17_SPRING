@@ -1807,6 +1807,65 @@ http://localhost:8080/swagger-ui/index.html
 RestTemplate, Webclient, Cache, @Schedule, json-patch, @HttpExchange, ...
 
 
+Task:
+Project and Employee Spring RestController
+
+
+
+Day 5 Recap:
+bi-directional assocaition using "mappedBy" attribute of @OneToMany
+ManyToMany relationship
+AOP--> aspect, joinpoint, pointcut, advice
+@Transactional --> Around Advice
+ExceptionHandling in Spring MVC --> @ControllerAdvice, @ExceptionHandler
+javax.constraints.validation ==>
+spring-boot-validation dependency
+HibernateValidation ==> implmentation
+@NotBlak , @Min, @Max, ...
+
+@Validated and @Valid {method arguments are valid}
+
+addProduct(@RequestBody @Valid Product p); ==> MethodArgumentnotValidException
+
+@WebMvcTest(ProductController.class)
+==>TestDispatcherServlet instead of actual DispatcherServlet
+==> loads only SpringMVC relavent components; -> HandlerMapping, Jackson for Java<-->JSON,
+==> won't load other Repository, @Service beans 
+==> @MockBean OrderService service;
+==> MockMvc ==> to perform RESTful CRUD operations ==> GET, POST, PUT, DELETE, PATCH
+==> JUNIT, Hamcrest, json-patch , mockito
+
+OrderController
+
+--> OpenAPI for RESTful Documentation / RAML
+
+Day 6
+
+spring-boot-actuator
+Spring Boot includes a number of additional features to help you monitor and manage your application when you push it to production. 
+Health Check, Metrics {jvm_threads, heap_area, cpu_usage,...}
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+management.endpoint.health.show-details=always
+management.endpoints.web.exposure.include=health,metrics,info
+
+Health Check ==> application UP /DOWN
+Database, JMS, MicroServices, DiscoveryServer ==> Distributed system
+
+http://localhost:8080/actuator
+
+Spring Boot Actuator comes with several pre-defined health indicators:
+* DataSourceHealthIndicator
+* MongoHealthIndicator
+* RedisHealthIndicator
+...
+
+http://localhost:8080/actuator/health
+ab -n 500 -c 100 http://localhost:8080/api/products
+Windows :--> install ApacheHTTP Daemon server
 
 
 
