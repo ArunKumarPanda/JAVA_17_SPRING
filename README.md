@@ -2234,3 +2234,20 @@ public class ProductController {
 
 @RepositoryRestController ==> new endpoints
 
+==============
+
+RestTemplate and WebClient can be used to consume RESTful APIs
+can also be used for Integration Testing 
+
+@Test
+RestTemplate ==> APi ==> Controller ==> Service ==> DAO ==> Database
+
+
+@Bean
+RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
+}
+
+
+
+
