@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -46,11 +47,13 @@ public class ProductController {
 	public  ResponseEntity<EntityModel<Product>> getProductHateoas(@PathVariable("id") int id) throws ResourceNotFoundException {
 		
 		Product p = service.getProductById(id);
+		Link link1;
+		
 		EntityModel<Product> entityModel = EntityModel.of(p,
-				linkTo(methodOn(ProductController.class).getProductHateoas(id)).withSelfRel()
+				linkTo(methodOn(ProductController.class).getProductHateoas(id)).withSelfRel(),
+				linkTo(methodOn(ProductController.class).getProducts(0, 0)).withRel("products")
 				.andAffordance(afford(methodOn(ProductController.class).updateProduct(id, null)))
-				 .andAffordance(afford(methodOn(ProductController.class).delete(id))),
-				linkTo(methodOn(ProductController.class).getProducts(0, 0)).withRel("products"));
+				.andAffordance(afford(methodOn(ProductController.class).delete(id))));
 		
 		return ResponseEntity.ok(entityModel);
 	}

@@ -2196,4 +2196,21 @@ List<Product> ==> with links ==> CollectionModel<List<Product>>
 @EnableHypermediaSupport(type = HypermediaType.HAL_FORMS)
 ```
 
+Spring Data REST 
+--> takes the features of Spring HATEOAS and Spring Data JPA and automatically combines them together.
+--> No Need for RestController
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-data-rest</artifactId>
+</dependency>
+
+application.properites
+com.adobe.prj.entity package
+
+spring.data.rest.base-path=/api
+
+http://localhost:8080/api/products/search/findByQuantity?qty=100
+
+http://localhost:8080/api/products/search/getByRange?l=100&h=5000
+
 		
