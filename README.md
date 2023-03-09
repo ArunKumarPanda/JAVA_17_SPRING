@@ -2103,7 +2103,45 @@ http://localhost:8081/
 
 =====================================
 
+Recap: --> Caching-> Etag, CacheManager, ConcurrentCacheManager [@ConditionalOnMissingBean], 
+spring-data-redis ==> Redis as CacheManager, database
 
+nodeJS 
+npx redis-commander 
+starts redis client
 
+If you need to store in redis --> data sent to redis implements Serializable
 
+// state of product can be sent to stream ==> Redis , file , Kafka, Kinesis stream
+public class Product implements Serializable {
+} 
+
+ObjectMapper ==> Java <--> JSON
+
+Swiggy / Zomato
+--> every day first request --> pull menu from restuarants --> cache
+
+--> placeOrder --> if item is not available --> throw exception
+
+================
+
+Day 7:
+GET, POST, DELETE
+PUT ==> major update on entity /class
+JSON Patch operations: --> partial update
+application/json-patch+json
+
+PATCH http://localhost:8080/api/employees/1
+
+Accept: application/json
+Content-type: application/json-patch+json
+
+Body:
+
+[
+	{"op":"replace", "path": "/email", "value": "roger@adobe.com"},
+	{"op": "add", "path": "/languages/0", "value":"Sanskrit"}
+]
+
+======
 
