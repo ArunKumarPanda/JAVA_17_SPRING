@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +28,9 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import jakarta.validation.Valid;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+
 @RestController
 @RequestMapping("api/products")
 @Validated
@@ -37,6 +41,19 @@ public class ProductController {
 	@Autowired
 	private ObservationRegistry observationRegistry;
 
+
+	@GetMapping("/hateoas/{id}")
+	public  ResponseEntity<EntityModel<Product>> getProductHateoas(@PathVariable("id") int id) throws ResourceNotFoundException {
+		
+		Product p = service.getProductById(id);
+		EntityModel<Product> entityModel = EntityModel.of(p,
+				linkTo(methodOn(ProductController.class).getProductHateoas(id)).withSelfRel()
+				.andAffordance(afford(methodOn(ProductController.class).updateProduct(id, null)))
+				 .andAffordance(afford(methodOn(ProductController.class).delete(id))),
+				linkTo(methodOn(ProductController.class).getProducts(0, 0)).withRel("products"));
+		
+		return ResponseEntity.ok(entityModel);
+	}
 	
 	@GetMapping("/cache/{id}")
 	public ResponseEntity<Product> getProductCache(@PathVariable("id") int id) throws ResourceNotFoundException {
@@ -86,7 +103,7 @@ public class ProductController {
 	// Avoid
 	@CacheEvict(value="productCache", key="#id")
 	@DeleteMapping("/{id}")
-	public String delete(@PathVariable("id") int id) {
-		return "deleted!!!";
+	public @ResponseBody List<Product> delete(@PathVariable("id") int id) {
+		return service.getProducts();
 	}
 }

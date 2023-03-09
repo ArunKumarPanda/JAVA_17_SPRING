@@ -2143,5 +2143,57 @@ Body:
 	{"op": "add", "path": "/languages/0", "value":"Sanskrit"}
 ]
 
-======
 
+{"op": "move", "from":/languages/0", "path":/languages/2"}
+
+{"op": "remove", "path":"/skills"}
+
+
+==================
+
+
+HATEOAS ==> Level 3 RESTful Web services with links
+Hypermedia As The Extension Of Application State
+
+Richardson Maturity Model
+
+https://martinfowler.com/articles/richardsonMaturityModel.html
+
+Amazon
+ List
+	==> Details
+	==> Payment
+	==> Suppiler
+
+WebMvcLinkBuilder -- Builder to ease building Link instances pointing to Spring MVC controllers.
+
+Product ==> Product with Links ==> EntityModel<Product>
+
+RepresentationModel --> EnityModel or CollectionModel
+
+List<Product> ==> with links ==> CollectionModel<List<Product>>
+
+<!-- HATEOAS -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
+
+```
+@GetMapping("/hateoas/{id}")
+	public  ResponseEntity<EntityModel<Product>> getProductHateoas(@PathVariable("id") int id) throws ResourceNotFoundException {
+		
+		Product p = service.getProductById(id);
+		EntityModel<Product> entityModel = EntityModel.of(p,
+				linkTo(methodOn(ProductController.class).getProductHateoas(id)).withSelfRel()
+				.andAffordance(afford(methodOn(ProductController.class).updateProduct(id, null)))
+				 .andAffordance(afford(methodOn(ProductController.class).delete(id))),
+				linkTo(methodOn(ProductController.class).getProducts(0, 0)).withRel("products"));
+		
+		return ResponseEntity.ok(entityModel);
+	}
+
+@EnableHypermediaSupport(type = HypermediaType.HAL_FORMS)
+```
+
+		
