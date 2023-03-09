@@ -2213,4 +2213,24 @@ http://localhost:8080/api/products/search/findByQuantity?qty=100
 
 http://localhost:8080/api/products/search/getByRange?l=100&h=5000
 
-		
+RepositoryRestConfigurer ==> to control what endpoints need not be exposed.
+
+Never create @RestController in this project ==> create parallel endpoints with different configuration options --> MEssageConverter, error handler, ...
+
+Solution:
+@BasePathAwareController and @RepoistoryRestController --> manually create endpoints along with Spring data rest
+
+@BasePathAwareController
+public class ProductController {
+	@Autowired
+	private ProductDao productDao;
+	
+	@RequestMapping(path = "products", method = RequestMethod.GET)
+	//@GetMapping()
+	public @ResponseBody List<Product> getProducts() {
+		return Arrays.asList(Product.builder().id(1).name("A").build(), Product.builder().id(2).name("B").build());	
+	}
+}
+
+@RepositoryRestController ==> new endpoints
+

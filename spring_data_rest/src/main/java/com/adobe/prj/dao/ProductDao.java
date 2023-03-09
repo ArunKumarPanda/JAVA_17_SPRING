@@ -20,3 +20,6 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
 	@Query("update Product set price = :pr where id = :id")
 	void updateProduct(@Param("id") int id, @Param("pr") double price);
 }
+
+
+// PreparedStatement / Statement ==> executeQuery(SELECT) ==> ResultSet / executeUpdate(INSERT|DELETE|UPDATE) ==> int
