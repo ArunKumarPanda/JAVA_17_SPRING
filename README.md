@@ -2248,6 +2248,17 @@ RestTemplate restTemplate(RestTemplateBuilder builder) {
 		return builder.build();
 }
 
+=========
+
+WebClient ==> web-flux
+
+WebFlux, Security, ...
+
+=============================
+
+
+
+
 
 
 
