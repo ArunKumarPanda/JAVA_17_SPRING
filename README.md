@@ -2250,11 +2250,33 @@ RestTemplate restTemplate(RestTemplateBuilder builder) {
 
 =========
 
-WebClient ==> web-flux
 
-WebFlux, Security, ...
 
-=============================
+Recap ==> JSON_PATCH for partial update @PatchMapping() instead of @PutMapping()
+
+HAEOAS ==> EntityModel ==> state + WebMVC Links  ==> WebMvcLinkBuilder [ linkTo, affordance, afford, methodOn ==> static methods]
+
+Spring Data Rest ==> Spring Data JPA + Spring Rest
+based on JpaRepository it creates  endpoints ==> no need for RestController and Service
+@BasePathAwareController ==> modify endpoints "products"
+@RespositoryRestController ==> adding custom endpoints
+
+RestTemplate ==> Rest Client provided by Spring Framework to make API calls to endpoints
+--> Application to Application ; Integration testing
+
+
+Day 8
+
+@EnableAsync @Async
+
+Future<Integer> f1 = service.doTask();
+// lines are not blocked
+// line 2
+// line 3
+
+f1.get(); // blocked
+
+
 
 
 
