@@ -2367,8 +2367,70 @@ context.setAuthentication(authResult);
 
 cmd + shift + T
 
+JWT
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+PAYLOAD:
+{
+  "sub": "banu",
+  "iat": 1516239022,
+  "exp": 3434234324,
+  "iss": "adobe",
+   "roles": ["admin", "manager", "user"]
+}
+
+VERIFY:
+HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+  topsecretsaltvalue
+) secret base64 encoded
+
+======================
 
 
+HttpHeaders
+
+Accept:
+Content-type:
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+User Register or user login on success --> generate token
+
+
+Flow:
+User Register
+POST: http://localhost:8080/api/auth/register
+Accept
+Content-type
+Body:
+{
+    "firstName": "Banu",
+    "lastName" : "Prakash",
+    "email": "banu@lucidatechnologies.com",
+    "password": "secret123"
+}
+
+AuthenticateService register() generates token
+
+
+REsponse:
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYW51QGx1Y2lkYXRlY2hub2xvZ2llcy5jb20iLCJpYXQiOjE2Nzg0NTA1NzIsImV4cCI6MTY3ODQ1MjAxMn0.D1O1lCLYcGLDH1viRYh_z4PGeTXTDrmzeSSKEPuSwmA"
+}
+
+
+
+
+GET: http://localhost:8080/api/hello
+
+Accept:application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYW51QGx1Y2lkYXRlY2hub2xvZ2llcy5jb20iLCJpYXQiOjE2Nzg0NTA1NzIsImV4cCI6MTY3ODQ1MjAxMn0.D1O1lCLYcGLDH1viRYh_z4PGeTXTDrmzeSSKEPuSwmA
 
 
 
