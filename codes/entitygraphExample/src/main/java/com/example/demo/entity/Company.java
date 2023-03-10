@@ -17,47 +17,26 @@ import javax.persistence.OneToMany;
 
 
 @Entity
-@NamedQueries({
-        @NamedQuery(name = "companyWithDepartmentsNamedQuery",
-                query = "SELECT DISTINCT c " +
-                        "FROM Company c " +
-                        "LEFT JOIN FETCH c.departments " +
-                        "WHERE c.id = :id"),
-        @NamedQuery(name = "companyWithDepartmentsAndEmployeesNamedQuery",
-                query = "SELECT DISTINCT c " +
-                        "FROM Company c " +
-                        "LEFT JOIN FETCH c.departments as d " +
-                        "LEFT JOIN FETCH d.employees " +
-                        "WHERE c.id = :id"),
-        @NamedQuery(name = "companyWithDepartmentsAndEmployeesAndOfficesNamedQuery",
-                query = "SELECT DISTINCT c " +
-                        "FROM Company c " +
-                        "LEFT JOIN FETCH c.departments as d " +
-                        "LEFT JOIN FETCH d.employees " +
-                        "LEFT JOIN FETCH d.offices " +
-                        "WHERE c.id = :id"),
-        @NamedQuery(name = "companyWithCarsNamedQuery",
-                query = "SELECT DISTINCT c " +
-                        "FROM Company c " +
-                        "LEFT JOIN FETCH c.cars " +
-                        "WHERE c.id = :id"),
-})
-
 @NamedEntityGraphs({
         @NamedEntityGraph(name = "companyWithDepartmentsGraph",
                 attributeNodes = {@NamedAttributeNode("departments")}),
         
         @NamedEntityGraph(name = "companyWithDepartmentsAndEmployeesGraph",
-                attributeNodes = {@NamedAttributeNode(value = "departments", subgraph = "departmentsWithEmployees")},
+                attributeNodes = {
+                		@NamedAttributeNode(value = "departments", 
+                		subgraph = "departmentsWithEmployees")
+                	},
                 subgraphs = @NamedSubgraph(
                         name = "departmentsWithEmployees",
                         attributeNodes = @NamedAttributeNode("employees"))),
         
         @NamedEntityGraph(name = "companyWithDepartmentsAndEmployeesAndOfficesGraph",
-                attributeNodes = {@NamedAttributeNode(value = "departments", subgraph = "departmentsWithEmployeesAndOffices")},
+                attributeNodes = {@NamedAttributeNode(value = "departments", 
+                subgraph = "departmentsWithEmployeesAndOffices")},
                 subgraphs = @NamedSubgraph(
                         name = "departmentsWithEmployeesAndOffices",
-                        attributeNodes = {@NamedAttributeNode("employees"), @NamedAttributeNode("offices")}))
+                        attributeNodes = {@NamedAttributeNode("employees"), 
+                        		@NamedAttributeNode("offices")}))
 })
 public class Company {
 	 @Id
@@ -69,7 +48,7 @@ public class Company {
 	    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
 	    private Set<Department> departments = new HashSet<>();
 
-	    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
 	    private Set<Car> cars = new HashSet<>();
 
 		public Long getId() {

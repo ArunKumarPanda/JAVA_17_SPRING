@@ -2276,6 +2276,96 @@ Future<Integer> f1 = service.doTask();
 
 f1.get(); // blocked
 
+===
+
+src/main/resources
+schema.sql ==> DDL
+data.sql ==> DML
+
+companyWithDepartmentsGraph
+	select
+        company0_.id as id1_2_0_,
+        company0_.name as name2_2_0_,
+        department1_.company_id as company_3_3_1_,
+        department1_.id as id1_3_1_,
+        department1_.id as id1_3_2_,
+        department1_.company_id as company_3_3_2_,
+        department1_.name as name2_3_2_ 
+    from
+        company company0_ 
+    left outer join
+        department department1_ 
+            on company0_.id=department1_.company_id 
+    where
+        company0_.id=?
+
+companyWithDepartmentsAndEmployeesGraph
+	select
+        company0_.id as id1_2_0_,
+        company0_.name as name2_2_0_,
+        department1_.company_id as company_3_3_1_,
+        department1_.id as id1_3_1_,
+        department1_.id as id1_3_2_,
+        department1_.company_id as company_3_3_2_,
+        department1_.name as name2_3_2_,
+        employees2_.department_id as departme5_4_3_,
+        employees2_.id as id1_4_3_,
+        employees2_.id as id1_4_4_,
+        employees2_.address_id as address_4_4_4_,
+        employees2_.department_id as departme5_4_4_,
+        employees2_.name as name2_4_4_,
+        employees2_.surname as surname3_4_4_ 
+    from
+        company company0_ 
+    left outer join
+        department department1_ 
+            on company0_.id=department1_.company_id 
+    left outer join
+        employee employees2_ 
+            on department1_.id=employees2_.department_id 
+    where
+        company0_.id=?
+
+When using fetchgraph all relationships are considered to be lazy regardless of annotation
+laodGraph uses LAZY | EAGER annotated data 
+
+
+http://localhost:8080/api/company?query=company+department+offices
+
+==============
+	186229
+
+
+Spring Security
+
+	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+	creates: 
+	1) http://localhost:8080/logout
+	2) http://localhost:8080/login
+	3)creates one user with generated password
+	user: user
+	pwd: ad4ed805-5200-4f7c-aefe-53ac67093690
+
+
+DelegatingFilterProxy => UsernamePasswordAuthenticationFilter => 
+1) user login --> attemptAuthentication() --> UsernamePasswordAuthenticationToken [user, pwd, isAuthenticated = false]
+2) AuthenticationManager ==> InMemoryAuthProvider, DAOAuthProvider, LDapAuthProvider
+
+3) if athenticate() method of AuthenticationManager returns Authenticate {priciple, credentionals:null,
+grants: ROLES, isAuthenicated:true } instead of Exception
+successfulAuthentication(authResult)
+==> SecurityContextHolder is a place where every users SecurityContext is loaded
+==> SecurityContext is one per user
+SecurityContext context = ..
+context.setAuthentication(authResult);
+
+4) for every request from client --> checks SecurityContext and allows / blocks users for different URLs/methods
+
+cmd + shift + T
 
 
 

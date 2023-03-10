@@ -12,6 +12,6 @@ public interface OrderDao extends JpaRepository<Order, Integer> {
 
 	//@Query("select c.email, o.orderDate, o.total from Order o inner join o.customer")
 	//List<Object[]> orderReport(); // Object[0] ==> email; Object[1] orderDate; object[2] = total
-	@Query("select new com.adobe.prj.dto.Report(c.email, o.orderDate, o.total) from Order o inner join o.customer")
-	List<Report> orderReport(); // for(Report r : orderReport()) { r.email , r.orderDate, r. total }
+//	@Query("select new com.adobe.prj.dto.Report(c.email, o.orderDate, o.total) from Order o inner join o.customer")
+//	List<Report> orderReport(); // for(Report r : orderReport()) { r.email , r.orderDate, r. total }
  }
